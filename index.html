@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="el">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet"
+href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+crossorigin="anonymous">
+    <title>Lottery-Ballot</title>
+</head>
+
+<body style="margin: 2em;">
+
+    <h1><center>Lottery-Ballot</center></h1>
+
+    <hr>
+
+    <form id="contract-form">
+
+        <div class="form-group">
+            <label for="Amount">Ποσό που αποστελετε με καθε bid</label>
+            <input value="0.01" class="form-control" id="amount" aria-
+            describedby="amountHelp"
+            
+            placeholder="Amount to send in ETH" required="true">
+        </div>
+
+        <div align="middle"; class="form-group">
+            
+            <img width="300" height="400" src="car.jpg" alt="Car"> 
+            <button type="submit" class="btn btn-primary" value="0" id="bid">BID</button> 
+            
+            <img width="300" height="400" src="phone.jpg" alt="Phone"> 
+            <button type="submit" class="btn btn-primary" value="1" id="bid">BID</button>
+            
+            <img width="300" height="400" src="Pc.jpg" alt="PC"> 
+            <button type="submit" class="btn btn-primary" value="2" id="bid">BID</button> 
+            <div align="middle"; id="deposit-result">Πατώντας το κουμπί "BID" τα χρήματά σας θα πιστωθούν στο συμβόλαιο.</div>
+        
+        </div>
+
+        <hr>
+
+        <div align="middle"; class="form-group">
+            <label for="Sender Address">Current Account</label>
+            <div id="from-Address">Όταν συνδεθεί το Metamask, εδώ εμφανίζεται η διεύθυνσή σας</div>
+        </div>
+        
+        <div align="middle"; class="form-group">
+            <label for="Receiver Address">Owner Account</label>
+            <input align="middle"; value="0x8CF028dDB951AEBbb8DcDf4986f0D62B060E79b3" type="text"
+
+            class="form-control" id="toAddress"
+
+             aria-describedby="toAddressHelp" placeholder="Enter the receipient address"
+
+            required="true">
+       
+        </div>
+   
+    </form>
+
+    <hr>
+
+    <div align="middle" class="Buttons">
+        <form id="Declear-form">
+            <button type="submit" class="btn btn-primary">Declear Winner</button>
+            <div id="Declear-display">Πατήστε το κουμπί για να ξεκινησει η κληρωση .</div>
+        </form>
+        
+        <form id="Withdraw-form">
+            <button type="submit" class="btn btn-primary">Withdraw</button>
+            <div id="Withdraw-display">Πατήστε το κουμπί για να τραβηξεις τα λεφτα στο συμβολαιο.</div>
+        </form>
+            
+        <form id="Reveal-form">
+            <button type="submit" class="btn btn-primary">Reveal</button>
+            <div id="reveal-display">Πατήστε το κουμπί για να δείτε ποσα bids εγιναν για καθε αντικειμενο.</div>
+        </form>
+
+        <form id="AMI-form">    
+            <button type="submit" class="btn btn-primary">Am I Winner</button>
+            <div id="AMI-display">Πατήστε το κουμπί για να δεις αν εισαι νικητης.</div>
+        </form>
+
+        <form id="Reset-form">
+            <button type="submit" class="btn btn-primary">Reset</button>
+            <div id="Reset-display">Πατήστε το κουμπί για να ξανα ξεκινησει νεος κυκλος αγορων .</div>
+        </form>
+    </div>
+
+    
+
+    <h2 align="middle">Reveal balance of contract:</h2>
+    <form align="middle" id="get-balance-form">
+        <button type="submit" class="btn btn-primary">Reveal Balance</button>
+        <div id="the-balance">Πατήστε το κουμπί για να δείτε το ποσό που είναι αποταμιευμένο στο συμβόλαιο.</div>
+    </form>
+
+    <script src="web3.min.js"></script>
+
+    <script src="contractAbi.js"></script>
+    <!-- var abi = [...] -->
+    <script src="contractAbi.js"></script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous">
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous">
+    </script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous">
+    </script>
+
+    <script>
+        window.addEventListener('load', async () => {
+            if (window.ethereum) 
+            {
+                const web3 = new Web3(window.ethereum);
+                try 
+                {
+                    // Request account access if needed
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+                    // Acccounts now exposed
+                } 
+                catch (error) 
+                {
+                    console.error(error);
+                }
+                // Legacy dapp browsers...
+            }
+        });
+
+        if (typeof web3 != 'undefined') 
+        {
+            web3 = new Web3(web3.currentProvider);
+        }
+
+        var fromAddress;
+        web3.eth.getAccounts((error, accounts) => {
+            if (error) 
+            {
+                console.log('error:' + error);
+                return;
+            } 
+            else   
+            {
+                fromAddress = accounts[0];
+                $('#from-Address').html('<b>' + fromAddress + '</b>');
+            }
+        });
+
+        if (window.ethereum) 
+        {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                web3.eth.getAccounts((error, accounts) => {
+                    if (error) 
+                    {
+                        console.log('error:' + error);
+                        return;
+                    }
+                    else 
+                    {
+                        fromAddress = accounts[0];
+                        $('#from-Address').html('<b>' + fromAddress + '</b>');
+                    }
+                });
+            });
+        }
+
+        //change this to the ACTUAL contract address that you created on truffle migrate
+        var contractAddress = "0x055D2D81dc84FD366Ac740E0fd75D6CCbbc132B8";
+        var LotteryContract = new web3.eth.Contract(abi, contractAddress);
+        var result;
+
+        //make sure that addresses are legit
+        $('#contract-form').submit(async () => {
+            event.preventDefault();
+            $('#from-Address').html('<b>' + fromAddress + '</b>');
+            var toAddress = $('#toAddress').val();
+
+            if (web3.utils.isAddress(toAddress) != true) 
+            {
+                alert('Δεν δώσατε σωστή διεύθυνση παραλήπτη.');
+                return;
+            }
+
+            // make sure the ETH is > 0
+            var amount = parseFloat($('#amount').val());
+            if (isNaN(amount) || amount <= 0) 
+            {
+                alert('Πρέπει να στείλετε περισσότερα από 0 ETH');
+                return;
+            }
+            
+            var bidId = parseInt($('#bid').val());
+            LotteryContract.methods.bid(bidId).send(
+            { from: fromAddress, gas: 100000, value: web3.utils.toWei(amount.toString(), 'ether') },
+            (error, result) => 
+            {
+                if (error) 
+                {
+                    console.log('error: ' + error);
+                    $('#deposit-result').html('Error: <b>' + error.message + '</b>');
+                }
+                else 
+                {
+                    $('#deposit-result').html('Success TX: <b>' + result + '</b>');
+                }
+            });
+            
+        });
+        
+        $('#Reveal-form').submit(async () =>
+        {
+            event.preventDefault();
+            result = await LotteryContract.methods.Reveal().call();
+            console.log('result: ' + JSON.stringify(result));
+            $('#reveal-display').html('The tottal amount of bids per item: <b>' + result[0] + '</b>');
+        })
+
+        $('#Am-i-winner-form').submit(async () =>
+        {
+            event.preventDefault();
+            result = await LotteryContract.methods.AmIWinner().call();
+            console.log('result: ' + JSON.stringify(result));
+            $('#AMI-display').html('Shows if you won something: <b>' + result[0] + '</b>');
+        })
+
+        $('#Decleare-form').submit(async () =>
+        {
+            event.preventDefault();
+            result = await LotteryContract.methods.DeclearWinners().call();
+            console.log('result: ' + JSON.stringify(result));
+            $('#Declear-display').html('Starts the ballot: <b>' + result[0] + '</b>');
+        })
+
+        $('#Withdraw-form').submit(async () =>
+        {
+            event.preventDefault();
+            result = await LotteryContract.methods.withdraw().send({ from: fromAddress, gas:100000 });
+            console.log('result: ' + JSON.stringify(result));
+            $('#Withdraw-display').html('Withdraws the amount into the owners wallet: <b>' + result[0] + '</b>');
+        })
+        
+        $('#get-balance-form').submit(async () => 
+        {
+            event.preventDefault();
+            result = await web3.eth.getBalance(contractAddress);
+            console.log('balance: ' + result);
+            $('#the-balance').html('<b>Τρέχον υπόλοιπο: </b>' + web3.utils.fromWei(result));
+        });
+
+        $('#Reset-form').submit(async () => 
+        {
+            event.preventDefault();
+            result = await LotteryContract.methods.Reset().call();
+            console.log('result: ' + JSON.stringify(result));
+            $('#Reset-display').html('<b>Started the reset proccess: </b>' + web3.utils.fromWei(result));
+        });     
+        
+    </script>
+</body>
+</html>
